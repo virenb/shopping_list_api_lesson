@@ -36,4 +36,25 @@ app.post('/items', jsonParser, function(req, res) {
     res.status(201).json(item);
 });
 
+app.delete('/items/:id', jsonParser, function(req, res) {
+        var itemID = +req.params.id;
+            if (typeof itemID === 'number') {
+  
+        var deletedItem;
+   
+        storage.items.forEach(function(object, index, storageArray){
+            if (object.id === itemID) {
+                deletedItem = object;
+                return storageArray.splice(index, 1);
+            } 
+        });
+        res.status(202).json(deletedItem); // Accepted
+        
+    } else {
+        var responseMsg = {'message': 'No item with that id was found'};
+        res.status(404).json(responseMsg); // Not Found
+    }
+});
+    
+
 app.listen(process.env.PORT || 8080);
