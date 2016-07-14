@@ -74,14 +74,14 @@ app.post('/items', jsonParser, function(req, res) {
 
 app.delete('/items/:id', jsonParser, function(req, res) {
 
-        var id = +req.params.id;
+        var id = parseInt(req.params.id);
         var item = storage.delete(id);
 
         if (item) {
             return res.status(201).json(item);
         } 
         else {
-      return res.sendStatus(404).json("Item not found.");
+      return res.sendStatus(404).json("Error: No item found.");
         }
 });
 
@@ -95,7 +95,7 @@ app.put('/items/:id', jsonParser, function(req, res) {
             return res.status(200).json(item);  
         } 
         else {
-            return res.sendStatus(404).json("Item not found.");
+            return res.sendStatus(404).json("Error: No item found.");
         }
    
 });
