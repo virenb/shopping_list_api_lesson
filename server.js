@@ -15,6 +15,27 @@ Storage.prototype.add = function(name) {
     return item;
 };
 
+Storage.prototype.delete = function(targetId) {
+
+        var targetIndex;
+
+        var targetItem = this.items.find(function(currentItem, currentIndex)    {
+
+
+            var answer = (currentItem.id === targetId);
+
+            // if var is true, indx of obj (item) in arr (items) = targetIndex
+            if (answer) {
+                targetIndex = currentIndex;
+                return answer
+            }
+        });
+
+        if (targetIndex !== undefined) this.items.splice(targetIndex, 1);
+
+        return targetItem;
+};
+
 var storage = new Storage();
 storage.add('Broad beans');
 storage.add('Tomatoes');
@@ -37,24 +58,18 @@ app.post('/items', jsonParser, function(req, res) {
 });
 
 app.delete('/items/:id', jsonParser, function(req, res) {
-        var itemID = +req.params.id;
-            if (typeof itemID === 'number') {
-  
-        var deletedItem;
-   
-        storage.items.forEach(function(object, index, storageArray){
-            if (object.id === itemID) {
-                deletedItem = object;
-                return storageArray.splice(index, 1);
-            } 
-        });
-        res.status(202).json(deletedItem); // Accepted
-        
-    } else {
-        var responseMsg = {'message': 'No item with that id was found'};
-        res.status(404).json(responseMsg); // Not Found
-    }
+
+        var id = parseInt(req.params.id);
+        var item = storage.delete(id);
+
+
+        if (item) {
+            return res.status(201).json(item);
+        } 
+        else {
+            return res.sendStatus(404).json("Item not found.");
+        }
 });
-    
+
 
 app.listen(process.env.PORT || 8080);
