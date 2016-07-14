@@ -21,17 +21,32 @@ Storage.prototype.delete = function(targetId) {
 
         var targetItem = this.items.find(function(currentItem, currentIndex)    {
 
-
             var answer = (currentItem.id === targetId);
 
-            // if var is true, indx of obj (item) in arr (items) = targetIndex
             if (answer) {
                 targetIndex = currentIndex;
                 return answer
             }
-        });
+        })
 
         if (targetIndex !== undefined) this.items.splice(targetIndex, 1);
+
+        return targetItem;
+};
+
+Storage.prototype.edit = function (targetId, targetName) {
+
+        var targetIndex;
+
+        var targetItem = this.items.find(function(currentItem, currentIndex)    {
+            var answer = (currentItem.id == targetId);
+            if (answer) {
+                targetIndex = currentIndex;
+                return answer
+            }
+        })
+
+        if (targetIndex !== undefined) this.items[targetIndex].name = targetName;
 
         return targetItem;
 };
@@ -59,17 +74,30 @@ app.post('/items', jsonParser, function(req, res) {
 
 app.delete('/items/:id', jsonParser, function(req, res) {
 
-        var id = parseInt(req.params.id);
+        var id = +req.params.id;
         var item = storage.delete(id);
-
 
         if (item) {
             return res.status(201).json(item);
         } 
         else {
-            return res.sendStatus(404).json("Item not found.");
+      return res.sendStatus(404).json("Item not found.");
         }
 });
 
+app.put('/items/:id', jsonParser, function(req, res) {
+        var id = parseInt(req.body.id);
+        var name = req.body.name;
+        
+        var item = storage.edit(id, name);
+        
+        if (item) {
+            return res.status(200).json(item);  
+        } 
+        else {
+            return res.sendStatus(404).json("Item not found.");
+        }
+   
+});
 
 app.listen(process.env.PORT || 8080);
