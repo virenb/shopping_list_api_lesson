@@ -25,9 +25,9 @@ Storage.prototype.delete = function(targetId) {
 
             if (answer) {
                 targetIndex = currentIndex;
-                return answer
+                return answer;
             }
-        })
+        });
 
         if (targetIndex !== undefined) this.items.splice(targetIndex, 1);
 
@@ -42,9 +42,9 @@ Storage.prototype.edit = function (targetId, targetName) {
             var answer = (currentItem.id == targetId);
             if (answer) {
                 targetIndex = currentIndex;
-                return answer
+                return answer;
             }
-        })
+        });
 
         if (targetIndex !== undefined) this.items[targetIndex].name = targetName;
 
@@ -74,30 +74,32 @@ app.post('/items', jsonParser, function(req, res) {
 
 app.delete('/items/:id', jsonParser, function(req, res) {
 
-        var id = parseInt(req.params.id);
-        var item = storage.delete(id);
+    var id = parseInt(req.params.id);
+    var item = storage.delete(id);
 
-        if (item) {
-            return res.status(201).json(item);
-        } 
-        else {
-      return res.sendStatus(404).json("Error: No item found.");
-        }
+    if (item) {
+        return res.status(202).json(item);
+    } 
+    else {
+        return res.sendStatus(404).json("Error: No item found.");
+    }
 });
 
 app.put('/items/:id', jsonParser, function(req, res) {
-        var id = parseInt(req.body.id);
-        var name = req.body.name;
-        
-        var item = storage.edit(id, name);
-        
-        if (item) {
-            return res.status(200).json(item);  
-        } 
-        else {
-            return res.sendStatus(404).json("Error: No item found.");
-        }
-   
+    var id = parseInt(req.body.id);
+    var name = req.body.name;
+    
+    var item = storage.edit(id, name);
+    
+    if (item) {
+        return res.status(200).json(item);  
+    } 
+    else {
+        return res.sendStatus(404).json("Error: No item found.");
+    }
 });
+
+exports.app = app;
+exports.storage = storage;
 
 app.listen(process.env.PORT || 8080);
